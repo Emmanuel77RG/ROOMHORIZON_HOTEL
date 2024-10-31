@@ -30,7 +30,7 @@ public class CREARHABITACION extends javax.swing.JFrame {
         setSize(446, 551); //tamaño de la interfaz
         setResizable(false);
         setLocationRelativeTo(null);
-        
+
     }
 
     /**
@@ -188,51 +188,56 @@ public class CREARHABITACION extends javax.swing.JFrame {
 
     private void crearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_crearActionPerformed
         // TODO add your handling code here:
-        String numeroHab = NumeroHabitacionTextField.getText();
-        if (numeroHab.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "El número de habitación no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;  // Detenemos la ejecución si el número de habitación está vacío
-        }
-
-        // Validación de capacidad
-        String numero = CapacidadTextField.getText();
-        if (!esNumeroEnteroValido(numero)) {
-            return;  // Detenemos la ejecución si la capacidad no es válida
-        }
-        int capacidad = Integer.parseInt(numero);
-
-        // Validación de tarifa
-        String tarifa = TarifaHabitacionTextField.getText();
-        if (!esNumeroDecimalValido(tarifa)) {
-            return;  // Detenemos la ejecución si la tarifa no es válida
-        }
-        double tarifaHabitacion = Double.parseDouble(tarifa);
-        tarifaHabitacion = formatoTarifa(tarifaHabitacion);
-
-        // Validación de tipo de habitación
-        String tipoHabitacion = TipoHabitacionTextField.getText();
-        if (tipoHabitacion.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "El tipo de habitación no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;  // Detenemos la ejecución si el tipo de habitación está vacío
-        }
-
-        // Validación de detalles de la habitación
-        String detallesHabitacion = DetallesHabitacionTextArea.getText();
-        if (detallesHabitacion.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Los detalles de la habitación no pueden estar vacíos.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;  // Detenemos la ejecución si los detalles están vacíos
-        }
-
-        // Validación de estado de la habitación (ComboBox)
-        String estadoHabitacion = (String) estadoHabitacionCombo.getSelectedItem();
-        if (estadoHabitacion == null || estadoHabitacion.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Debe seleccionar un estado para la habitación.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;  // Detenemos la ejecución si el estado no está seleccionado
-        }
-
-        // Si todas las validaciones son correctas, se procede con la creación de la habitación
         try {
             HabitacionDAO crearHabitacion = new HabitacionDAO();
+
+            String numeroHab = NumeroHabitacionTextField.getText();
+            if (numeroHab.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "El número de habitación no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;  // Detenemos la ejecución si el número de habitación está vacío
+            }
+            if(crearHabitacion.numeroHabitacionIguales(numeroHab)){
+                JOptionPane.showMessageDialog(null, "El número de habitación coincide con otra habitacion asigne otro numero.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;  // Detenemos la ejecución si el número de habitación está vacío
+            }
+
+            // Validación de capacidad
+            String numero = CapacidadTextField.getText();
+            if (!esNumeroEnteroValido(numero)) {
+                return;  // Detenemos la ejecución si la capacidad no es válida
+            }
+            int capacidad = Integer.parseInt(numero);
+
+            // Validación de tarifa
+            String tarifa = TarifaHabitacionTextField.getText();
+            if (!esNumeroDecimalValido(tarifa)) {
+                return;  // Detenemos la ejecución si la tarifa no es válida
+            }
+            double tarifaHabitacion = Double.parseDouble(tarifa);
+            tarifaHabitacion = formatoTarifa(tarifaHabitacion);
+
+            // Validación de tipo de habitación
+            String tipoHabitacion = TipoHabitacionTextField.getText();
+            if (tipoHabitacion.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "El tipo de habitación no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;  // Detenemos la ejecución si el tipo de habitación está vacío
+            }
+
+            // Validación de detalles de la habitación
+            String detallesHabitacion = DetallesHabitacionTextArea.getText();
+            if (detallesHabitacion.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Los detalles de la habitación no pueden estar vacíos.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;  // Detenemos la ejecución si los detalles están vacíos
+            }
+
+            // Validación de estado de la habitación (ComboBox)
+            String estadoHabitacion = (String) estadoHabitacionCombo.getSelectedItem();
+            if (estadoHabitacion == null || estadoHabitacion.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Debe seleccionar un estado para la habitación.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;  // Detenemos la ejecución si el estado no está seleccionado
+            }
+
+            // Si todas las validaciones son correctas, se procede con la creación de la habitación
             crearHabitacion.crearHabitacion(numeroHab, tipoHabitacion, capacidad, tarifaHabitacion, estadoHabitacion, detallesHabitacion);
             // Aquí iría el código para guardar la información de la habitación
             // Por ahora, simplemente mostramos un mensaje de confirmación

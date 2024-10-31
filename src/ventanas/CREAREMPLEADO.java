@@ -358,13 +358,13 @@ public class CREAREMPLEADO extends javax.swing.JFrame {
              if (contrasena.isEmpty()) {
                  JOptionPane.showMessageDialog(null, "La contraseña no puede estar vacía.", "Error", JOptionPane.ERROR_MESSAGE);
                  txcon.setText(""); // Limpiar el campo de contraseña
-                 continue;
+                 return;
              }
 
              if (contrasena.length() != 8) {
                  JOptionPane.showMessageDialog(null, "La contraseña debe tener exactamente 8 caracteres.", "Error", JOptionPane.ERROR_MESSAGE);
                  txcon.setText(""); // Limpiar el campo de contraseña
-                 continue;
+                 return;
              }
 
              // Expresión regular para validar la contraseña
@@ -373,7 +373,7 @@ public class CREAREMPLEADO extends javax.swing.JFrame {
              if (!contrasena.matches(regex)) {
                  JOptionPane.showMessageDialog(null, "La contraseña debe contener al menos una letra mayúscula, una letra minúscula, un número y un símbolo.", "Error", JOptionPane.ERROR_MESSAGE);
                  txcon.setText(""); // Limpiar el campo de contraseña
-                 continue;
+                 return;
              }
 
              // Si la contraseña cumple con todos los requisitos, rompemos el bucle

@@ -4,10 +4,12 @@
  */
 package conexion;
 
+import clases.Habitacion;
 import java.sql.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -110,4 +112,91 @@ public class HabitacionDAO {
         return statement.executeQuery();
     }
     
+    public boolean numeroHabitacionIguales(String numeroHab) throws SQLException{
+        String numHabitacion="";
+        String query="Select * from hotel.habitaciones where Numero_habitacion=? limit 1";
+        PreparedStatement statement=conectionDB.prepareStatement(query);
+        statement.setString(1, numeroHab);
+        ResultSet resultado;
+        resultado=statement.executeQuery();
+        while(resultado.next()){
+            numHabitacion=resultado.getString("Numero_habitacion");
+        }
+        if(numHabitacion!=numeroHab){
+            return true;
+        }
+        return false;
+    }
+    
+     //Logica para obtener lista de habitaciones por fecha y regresar un arrayList
+    public ArrayList<Habitacion> obtenerHabitacionesDisponiblesPorFechas(Date fechaInicio, Date fechaFin) throws SQLException {
+        String query = "SELECT h.Id_habitacion, h.Numero_habitacion, h.Tipo_habitacion, h.Capacidad, h.Tarifa_habitacion, h.Estado_habitacion, h.Detalles_habitacion "
+                + "FROM hotel.Habitaciones h "
+                + "WHERE h.Estado_habitacion = 'Disponible' "
+                + "AND h.Id_habitacion NOT IN ( "
+                + "    SELECT dr.Id_habitacion "
+                + "    FROM hotel.Detalles_reserva dr "
+                + "    INNER JOIN hotel.Reservas r ON dr.Id_reserva = r.Id_reserva "
+                + "    WHERE r.Fecha_entrada <= ? AND r.Fecha_salida > ?);";
+
+        PreparedStatement statement = conectionDB.prepareStatement(query);
+        statement.setDate(1, new java.sql.Date(fechaFin.getTime()));
+        statement.setDate(2, new java.sql.Date(fechaInicio.getTime()));
+        ResultSet rs = statement.executeQuery();
+
+        ArrayList<Habitacion> habitacionesDisponibles = new ArrayList<>();
+        while (rs.next()) {
+            Habitacion habitacion = new Habitacion(
+                    rs.getInt("Id_habitacion"),
+                    rs.getString("Numero_habitacion"),
+                    rs.getString("Tipo_habitacion"),
+                    rs.getInt("Capacidad"),
+                    rs.getDouble("Tarifa_habitacion"),
+                    rs.getString("Estado_habitacion"),
+                    rs.getString("Detalles_habitacion")
+            );
+            habitacionesDisponibles.add(habitacion);
+        }
+        return habitacionesDisponibles;
+    }
+
+    public ArrayList<Habitacion> habitacionesDisponiblesPorNumeroHab(String numeroHab) throws SQLException {
+        ArrayList<Habitacion> listaHabitaciones = new ArrayList<>();
+        String query = "Select * from hotel.habitaciones where Numero_habitacion=?";
+        PreparedStatement statement = conectionDB.prepareStatement(query);
+        statement.setString(1, numeroHab);
+        statement.executeQuery();
+        return listaHabitaciones;
+    }
+
+    public ArrayList<Habitacion> habitacionesDisponiblesPorTipo(String tipoHab) throws SQLException {
+        ArrayList<Habitacion> listaHabitaciones = new ArrayList<>();
+        String query = "Select * from hotel.habitaciones where Tipo_habitacion=? and Estado_habitacion='Disponible'";
+        PreparedStatement statement = conectionDB.prepareStatement(query);
+        statement.setString(1, tipoHab);
+        statement.executeQuery();
+        return listaHabitaciones;
+    }
+    
+    public ArrayList<Habitacion> obtenerTodasLasHabitaciones() throws SQLException {
+        String query = "SELECT * FROM hotel.habitaciones";
+        PreparedStatement statement = conectionDB.prepareStatement(query);
+        ResultSet rs = statement.executeQuery();
+
+        ArrayList<Habitacion> habitaciones = new ArrayList<>();
+        while (rs.next()) {
+            Habitacion habitacion = new Habitacion(
+                    rs.getInt("Id_habitacion"),
+                    rs.getString("Numero_habitacion"),
+                    rs.getString("Tipo_habitacion"),
+                    rs.getInt("Capacidad"),
+                    rs.getDouble("Tarifa_habitacion"),
+                    rs.getString("Estado_habitacion"),
+                    rs.getString("Detalles_habitacion")
+            );
+            habitaciones.add(habitacion);
+        }
+        return habitaciones;
+    }
+
 }

@@ -270,5 +270,101 @@ public class ReservasDAO {
         statement.setInt(3, idCliente);
         statement.executeUpdate();
     }
+    
+     public ArrayList<Reservas> obtenerHistorialDeReservas() throws SQLException {
+        ArrayList<Reservas> reservasDB = new ArrayList<>();
+
+        String query = "SELECT \n"
+                + "    r.Id_reserva, \n"
+                + "    c.Id_cliente,\n"
+                + "    c.Nombre AS Nombre_Cliente, \n"
+                + "    c.Apellido AS Apellido_Cliente, \n"
+                + "    h.Id_habitacion,\n"
+                + "    h.Numero_habitacion, \n"
+                + "    h.Tipo_habitacion, \n"
+                + "    r.Fecha_entrada, \n"
+                + "    r.Fecha_salida, \n"
+                + "    r.Hora_entrada, \n"
+                + "    r.Hora_salida, \n"
+                + "    r.Estado_reserva, \n"
+                + "    r.Fecha_creacion_reserva, \n"
+                + "    r.Fecha_modificacion, \n"
+                + "    d.Numero_personas, \n"
+                + "    d.Notas,\n"
+                + "    e.Id_empleado,\n"
+                + "    e.Nombre AS Nombre_Empleado,\n"
+                + "    e.Apellido AS Apellido_Empleado\n"
+                + "FROM \n"
+                + "    hotel.Reservas r\n"
+                + "JOIN hotel.Clientes c ON r.Id_cliente = c.Id_cliente\n"
+                + "JOIN hotel.Detalles_reserva d ON r.Id_reserva = d.Id_reserva\n"
+                + "JOIN hotel.Habitaciones h ON d.Id_habitacion = h.Id_habitacion\n"
+                + "JOIN hotel.Empleados e ON r.Id_empleado = e.Id_empleado\n"
+                + "ORDER BY \n"
+                + "    r.Fecha_creacion_reserva DESC;";
+
+        PreparedStatement statement = conexion.prepareStatement(query);
+        ResultSet resultados = statement.executeQuery();
+
+        while (resultados.next()) {
+
+            // Crear el objeto Cliente
+            Cliente cliente = new Cliente(
+                    resultados.getInt("Id_cliente"),
+                    resultados.getString("Nombre_Cliente"),
+                    resultados.getString("Apellido_Cliente")
+            );
+
+            // Crear el objeto Habitacion
+            Habitacion habitacion = new Habitacion(
+                    resultados.getInt("Id_habitacion"),
+                    resultados.getString("Numero_habitacion"),
+                    resultados.getString("Tipo_habitacion")
+            );
+
+            // Crear el objeto Empleado
+            Empleado empleado = new Empleado(
+                    resultados.getInt("Id_empleado"),
+                    resultados.getString("Nombre_Empleado"),
+                    resultados.getString("Apellido_Empleado")
+            );
+
+            // Convertir campos a Date y Time
+            Date fechaEntrada = resultados.getDate("Fecha_entrada");
+            Date fechaSalida = resultados.getDate("Fecha_salida");
+            Date fechaCreacion = resultados.getTimestamp("Fecha_creacion_reserva");
+            Date fechaModificacion = resultados.getTimestamp("Fecha_modificacion");
+
+            String horaEntrada = resultados.getTime("Hora_entrada") != null
+                    ? resultados.getTime("Hora_entrada").toString()
+                    : null;
+
+            String horaSalida = resultados.getTime("Hora_salida") != null
+                    ? resultados.getTime("Hora_salida").toString()
+                    : null;
+
+            // Crear el objeto Reservas
+            Reservas reserva = new Reservas(
+                    habitacion,
+                    cliente,
+                    empleado,
+                    resultados.getInt("Id_reserva"),
+                    fechaEntrada,
+                    fechaSalida,
+                    horaEntrada,
+                    horaSalida,
+                    resultados.getString("Estado_reserva"),
+                    fechaCreacion,
+                    fechaModificacion,
+                    resultados.getInt("Numero_personas"),
+                    resultados.getString("Notas")
+            );
+
+            reservasDB.add(reserva);
+        }
+
+        ReservasManager.getInstance().setListaReservas(reservasDB);
+        return reservasDB;
+    }
 
 }

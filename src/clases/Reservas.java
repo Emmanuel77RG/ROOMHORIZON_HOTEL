@@ -4,6 +4,10 @@
  */
 package clases;
 
+import conexion.ReservasDAO;
+import java.sql.SQLException;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -192,9 +196,76 @@ public class Reservas {
     public ArrayList<Reservas> getListaReservas() {
         return listaReservas;
     }
+
     public void agregarAlReservasManager() {
         ReservasManager.getInstance().addReserva(this);
     }
-    
+
+    public void crearReserva() throws SQLException {
+        // Logic to create the reservation in the database
+        ReservasDAO reservasDAO = new ReservasDAO();
+
+        // Convert dates to the appropriate format
+        SimpleDateFormat formatoMySQL = new SimpleDateFormat("yyyy-MM-dd");
+        String fechaEntradaMySQL = formatoMySQL.format(this.fechaEntrada);
+        String fechaSalidaMySQL = formatoMySQL.format(this.fechaSalida);
+
+        // Create the reservation in the database
+        reservasDAO.crearReservaDB(this.cliente.getId_cliente(), this.empleado.getId_empleado(), fechaEntradaMySQL, fechaSalidaMySQL, this.estadoReserva);
+
+        // Get the ID of the newly created reservation
+        int idReserva = reservasDAO.obtenerReservaCliente(this.cliente.getId_cliente());
+        this.setIdReserva(idReserva);
+
+        // Create reservation details
+        reservasDAO.crearReservaDetallesReserva(this.idReserva, this.habitacion.getIdHabitacion(), this.cantidadPersonas, this.notas);
+
+        // Update the status of the room
+        reservasDAO.actualizarHabitacion(this.habitacion.getIdHabitacion());
+    }
+
+    // Method to modify a reservation
+    public void modificarReserva(Habitacion nuevaHabitacion) throws SQLException {
+        ReservasDAO reservasDAO = new ReservasDAO();
+
+        // Convert dates to the appropriate format
+        SimpleDateFormat formatoMySQL = new SimpleDateFormat("yyyy-MM-dd");
+        String fechaEntradaMySQL = formatoMySQL.format(this.fechaEntrada);
+        String fechaSalidaMySQL = formatoMySQL.format(this.fechaSalida);
+        String fechaHoraActualMySQL = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+
+        // Update the reservation
+        reservasDAO.modificarReservas(this.idReserva, this.empleado.getId_empleado(), this.estadoReserva, fechaEntradaMySQL, fechaSalidaMySQL, fechaHoraActualMySQL);
+
+        if (nuevaHabitacion != null && nuevaHabitacion.getIdHabitacion() != this.habitacion.getIdHabitacion()) {
+            // Modify reservation with room change
+            reservasDAO.modificarReservaConCambioDeHabitacion(this.idReserva, this.habitacion.getIdHabitacion(), nuevaHabitacion.getIdHabitacion(), this.cantidadPersonas, this.notas);
+            this.habitacion = nuevaHabitacion; // Update the room in the reservation
+        } else {
+            // Modify reservation without room change
+            reservasDAO.modificarReservaSinCambioDeHabitacion(this.idReserva, this.habitacion.getIdHabitacion(), this.cantidadPersonas, this.notas);
+        }
+    }
+
+    // Method to cancel a reservation
+    public void cancelarReserva() throws SQLException {
+        ReservasDAO reservasDAO = new ReservasDAO();
+
+        reservasDAO.cancelarReserva(this.habitacion.getIdHabitacion(), this.idReserva, this.cliente.getId_cliente(), this.empleado.getId_empleado());
+    }
+
+    public void registrarCheckIn(Time horaEntrada) throws SQLException {
+        ReservasDAO reservasDAO = new ReservasDAO();
+        //reservasDAO.actualizarReservaClienteCheckIn(this.idReserva, this.cliente.getId_cliente(), horaEntrada);
+
+        // Optionally update the reservation's state
+        this.setEstadoReserva("En estancia");
+    }
+
+    public static ArrayList<Reservas> obtenerHistorialDeReservas() throws SQLException {
+        ReservasDAO reservasDAO = new ReservasDAO();
+        return reservasDAO.obtenerHistorialDeReservas();
+    }
+
 }
 

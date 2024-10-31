@@ -55,6 +55,7 @@ public class CHECKIN extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         REGRESAR = new javax.swing.JButton();
+        mostrarTablaButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setUndecorated(true);
@@ -103,14 +104,21 @@ public class CHECKIN extends javax.swing.JFrame {
             }
         });
 
+        mostrarTablaButton.setText("Volver a mostrar tala");
+        mostrarTablaButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mostrarTablaButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(19, 19, 19)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 786, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 837, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -124,10 +132,12 @@ public class CHECKIN extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton2)))
-                        .addGap(153, 153, 153)
+                                .addComponent(jButton2)
+                                .addGap(18, 18, 18)
+                                .addComponent(mostrarTablaButton)))
+                        .addGap(60, 60, 60)
                         .addComponent(REGRESAR, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -147,13 +157,15 @@ public class CHECKIN extends javax.swing.JFrame {
                                 .addGroup(jPanel1Layout.createSequentialGroup()
                                     .addComponent(jLabel2)
                                     .addGap(6, 6, 6))
-                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(mostrarTablaButton)))
                             .addComponent(nombreClienteTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(REGRESAR, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addGap(27, 27, 27)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 303, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -295,6 +307,15 @@ public class CHECKIN extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_REGRESARActionPerformed
 
+    private void mostrarTablaButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mostrarTablaButtonActionPerformed
+        try {
+            // TODO add your handling code here:
+            rellenarTabla();
+        } catch (SQLException ex) {
+            Logger.getLogger(CHECKIN.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_mostrarTablaButtonActionPerformed
+
     private void actualizarReservas(ArrayList<Reservas> reservasSeleccionadas) throws SQLException {
         Date ahora = new Date();
 
@@ -323,6 +344,7 @@ public class CHECKIN extends javax.swing.JFrame {
                 reservasDAO.actualizarReservaClinte(res.getIdReserva(), res.getCliente().getId_cliente(), horaSQL);
             }
             JOptionPane.showMessageDialog(null, "Reservas actualizadas con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            rellenarTabla();
         }
             
     }
@@ -375,6 +397,7 @@ public class CHECKIN extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton mostrarTablaButton;
     private javax.swing.JTextField nombreClienteTextField;
     private javax.swing.JTable reservasCliente;
     // End of variables declaration//GEN-END:variables

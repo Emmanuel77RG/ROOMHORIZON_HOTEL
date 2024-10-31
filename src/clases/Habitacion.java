@@ -4,6 +4,11 @@
  */
 package clases;
 
+import conexion.HabitacionDAO;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+
 public class Habitacion {
     // Atributos correspondientes a las columnas de la tabla SQL
     private int idHabitacion;
@@ -97,6 +102,46 @@ public class Habitacion {
 
     public void setDetallesHabitacion(String detallesHabitacion) {
         this.detallesHabitacion = detallesHabitacion;
+    }
+
+    
+    public void guardarHabitacionEnBaseDeDatos() throws SQLException {
+        HabitacionDAO habitacionDAO = new HabitacionDAO();
+        //habitacionDAO.crearHabitacion(this);
+    }
+
+    public void actualizarHabitacionEnBaseDeDatos() throws SQLException {
+        HabitacionDAO habitacionDAO = new HabitacionDAO();
+        //habitacionDAO.actualizarHabitacion(this);
+    }
+
+    // Método estático para eliminar una habitación de la base de datos
+    public static void eliminarHabitacionDeBaseDeDatos(int idHabitacion) throws SQLException {
+        HabitacionDAO habitacionDAO = new HabitacionDAO();
+        habitacionDAO.eliminarHabitacion(idHabitacion);
+    }
+    
+    public static ArrayList<Habitacion> consultarDisponibilidadPorFechas(Date fechaInicio, Date fechaFin) throws SQLException {
+        java.sql.Date sqlFechaInicio = new java.sql.Date(fechaInicio.getTime());
+        java.sql.Date sqlFechaFin = new java.sql.Date(fechaFin.getTime());
+
+        HabitacionDAO habitacionDAO = new HabitacionDAO();
+        return habitacionDAO.obtenerHabitacionesDisponiblesPorFechas(sqlFechaInicio, sqlFechaFin);
+    }
+    public static ArrayList<Habitacion> consultarDisponibilidadPorNumero(String numeroHab) throws SQLException {
+        HabitacionDAO habitacionDAO = new HabitacionDAO();
+        return habitacionDAO.habitacionesDisponiblesPorNumeroHab(numeroHab);
+    }
+
+    public static ArrayList<Habitacion> consultarDisponibilidadPorTipo(String tipoHab) throws SQLException {
+        HabitacionDAO habitacionDAO = new HabitacionDAO();
+        return habitacionDAO.habitacionesDisponiblesPorTipo(tipoHab);
+    }
+
+    // Method to get all rooms
+    public static ArrayList<Habitacion> consultarTodasLasHabitaciones() throws SQLException {
+        HabitacionDAO habitacionDAO = new HabitacionDAO();
+        return habitacionDAO.obtenerTodasLasHabitaciones();
     }
 
 }

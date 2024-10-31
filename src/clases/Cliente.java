@@ -4,6 +4,8 @@
  */
 package clases;
 
+import conexion.ClienteDAO;
+import java.sql.SQLException;
 import java.util.Date;
 
 
@@ -75,6 +77,11 @@ public class Cliente {
 
     public void setNumero(String numero) {
         this.numero = numero;
+    }
+    
+    public void guardarClienteEnBaseDeDatos() throws SQLException {
+        ClienteDAO clienteDAO = new ClienteDAO();
+        //habitacionDAO.crearHabitacion(this);
     }
     
 }

@@ -513,7 +513,7 @@ public class CREARESERVAS extends javax.swing.JFrame {
         //CREAR RESERVA LOGICA
 
         //CREAR RESERVA LOGICA
-        if (cliente != null) {
+        if (cliente != null && habitacion!=null) {
             // Validaciones para campos vacíos
             if (ClienteTextField.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "El campo Cliente no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -588,7 +588,7 @@ public class CREARESERVAS extends javax.swing.JFrame {
                 Logger.getLogger(CREARESERVAS.class.getName()).log(Level.SEVERE, null, ex);
             }
         }else{
-            JOptionPane.showMessageDialog(null, "Asegurese de asignar un cliente desde la tabla clientes", "Informacion", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Asegurese de asignar un cliente desde la tabla clientes asi como una habitacion", "Informacion", JOptionPane.INFORMATION_MESSAGE);
         }
 
 
@@ -678,80 +678,87 @@ public class CREARESERVAS extends javax.swing.JFrame {
     private void ModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ModificarActionPerformed
         // TODO add your handling code here:
         //CODIGO para modifcar la habitacion;
-        if (ClienteTextField.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "El campo Cliente no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
+        if (objetoReferencia.getEstadoReserva().equals("Finalizada") || objetoReferencia.getEstadoReserva().equals("Cancelada")
+                || objetoReferencia.getEstadoReserva().equals("No show") || objetoReferencia.getEstadoReserva().equals("En estancia")) {
+            JOptionPane.showMessageDialog(null, "No puede modificar una habitacion 'Cancelada', 'En estancia', 'Finalizada', 'No show'", "Error", JOptionPane.ERROR_MESSAGE);
             return;
-        }
-        if (HabitacionTextField.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(null, "El campo Número de Habitación no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (jPanel5.getComponentCount() == 0 || jPanel6.getComponentCount() == 0) {
-            JOptionPane.showMessageDialog(null, "Las fechas de entrada y salida no pueden estar vacías.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+        } else {
+            if (ClienteTextField.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "El campo Cliente no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (HabitacionTextField.getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "El campo Número de Habitación no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (jPanel5.getComponentCount() == 0 || jPanel6.getComponentCount() == 0) {
+                JOptionPane.showMessageDialog(null, "Las fechas de entrada y salida no pueden estar vacías.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-        // Capturar fechas
-        JDateChooser fechaEntradaChooser = (JDateChooser) jPanel6.getComponent(0);
-        JDateChooser fechaSalidaChooser = (JDateChooser) jPanel5.getComponent(0);
-        Date fechaEntrada = fechaEntradaChooser.getDate();
-        Date fechaSalida = fechaSalidaChooser.getDate();
+            // Capturar fechas
+            JDateChooser fechaEntradaChooser = (JDateChooser) jPanel6.getComponent(0);
+            JDateChooser fechaSalidaChooser = (JDateChooser) jPanel5.getComponent(0);
+            Date fechaEntrada = fechaEntradaChooser.getDate();
+            Date fechaSalida = fechaSalidaChooser.getDate();
 
-        if (fechaEntrada == null) {
-            JOptionPane.showMessageDialog(null, "Debe seleccionar la fecha de entrada.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (fechaSalida == null) {
-            JOptionPane.showMessageDialog(null, "Debe seleccionar la fecha de salida.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+            if (fechaEntrada == null) {
+                JOptionPane.showMessageDialog(null, "Debe seleccionar la fecha de entrada.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (fechaSalida == null) {
+                JOptionPane.showMessageDialog(null, "Debe seleccionar la fecha de salida.", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
 
-        // Formato de fechas para MySQL
-        SimpleDateFormat formatoMySQL = new SimpleDateFormat("yyyy-MM-dd");
-        String fechaEntradaMySQL = formatoMySQL.format(fechaEntrada);
-        String fechaSalidaMySQL = formatoMySQL.format(fechaSalida);
+            // Formato de fechas para MySQL
+            SimpleDateFormat formatoMySQL = new SimpleDateFormat("yyyy-MM-dd");
+            String fechaEntradaMySQL = formatoMySQL.format(fechaEntrada);
+            String fechaSalidaMySQL = formatoMySQL.format(fechaSalida);
 
-        // Capturar fecha y hora actual para MySQL
-        SimpleDateFormat formatoDateTimeMySQL = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String fechaHoraActualMySQL = formatoDateTimeMySQL.format(new Date());
-        // Validar número de personas
-        String numeroPersonasReserva = numPersonasTextField.getText();
-        if (!esNumeroEnteroValido(numeroPersonasReserva)) {
-            JOptionPane.showMessageDialog(null, "Debe ingresar un numero valido", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        int capacidad = Integer.parseInt(numeroPersonasReserva);
-        String estadoreserva = String.valueOf(estadoReservaCombo.getSelectedItem());
+            // Capturar fecha y hora actual para MySQL
+            SimpleDateFormat formatoDateTimeMySQL = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String fechaHoraActualMySQL = formatoDateTimeMySQL.format(new Date());
+            // Validar número de personas
+            String numeroPersonasReserva = numPersonasTextField.getText();
+            if (!esNumeroEnteroValido(numeroPersonasReserva)) {
+                JOptionPane.showMessageDialog(null, "Debe ingresar un numero valido", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            int capacidad = Integer.parseInt(numeroPersonasReserva);
+            String estadoreserva = String.valueOf(estadoReservaCombo.getSelectedItem());
 
-        // Continuar con la lógica de crear reserva
-        String notasReserva = notasTextArea.getText();
+            // Continuar con la lógica de crear reserva
+            String notasReserva = notasTextArea.getText();
 //        if(objetoReferencia.getHabitacion()==null){
 //            System.out.println("La haabitacion no se ha inciiado");
 //            
 //            return;
 //        }
-        try {
-            reservasDAO = new ReservasDAO();
+            try {
+                reservasDAO = new ReservasDAO();
 
-            // Verificar si la habitación ha cambiado
-            if (habitacion != null) {
-                // Escenario 1: Se seleccionó una nueva habitación
-                reservasDAO.modificarReservas(objetoReferencia.getIdReserva(), objetoReferencia.getEmpleado().getId_empleado(), estadoreserva, fechaEntradaMySQL, fechaSalidaMySQL, fechaHoraActualMySQL);
-                reservasDAO.modificarReservaConCambioDeHabitacion(objetoReferencia.getIdReserva(), objetoReferencia.getHabitacion().getIdHabitacion(), habitacion.getIdHabitacion(), capacidad, notasReserva);
-            } else {
-                // Escenario 2: No se seleccionó una nueva habitación
-                reservasDAO.modificarReservas(objetoReferencia.getIdReserva(), objetoReferencia.getEmpleado().getId_empleado(), estadoreserva, fechaEntradaMySQL, fechaSalidaMySQL, fechaHoraActualMySQL);
-                reservasDAO.modificarReservaSinCambioDeHabitacion(objetoReferencia.getIdReserva(), objetoReferencia.getHabitacion().getIdHabitacion(), capacidad, notasReserva);
+                // Verificar si la habitación ha cambiado
+                if (habitacion != null) {
+                    // Escenario 1: Se seleccionó una nueva habitación
+                    reservasDAO.modificarReservas(objetoReferencia.getIdReserva(), objetoReferencia.getEmpleado().getId_empleado(), estadoreserva, fechaEntradaMySQL, fechaSalidaMySQL, fechaHoraActualMySQL);
+                    reservasDAO.modificarReservaConCambioDeHabitacion(objetoReferencia.getIdReserva(), objetoReferencia.getHabitacion().getIdHabitacion(), habitacion.getIdHabitacion(), capacidad, notasReserva);
+                } else {
+                    // Escenario 2: No se seleccionó una nueva habitación
+                    reservasDAO.modificarReservas(objetoReferencia.getIdReserva(), objetoReferencia.getEmpleado().getId_empleado(), estadoreserva, fechaEntradaMySQL, fechaSalidaMySQL, fechaHoraActualMySQL);
+                    reservasDAO.modificarReservaSinCambioDeHabitacion(objetoReferencia.getIdReserva(), objetoReferencia.getHabitacion().getIdHabitacion(), capacidad, notasReserva);
+                }
+
+                JOptionPane.showMessageDialog(null, "Reserva modificada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+
+                // Actualizar la tabla de reservas después de la modificación
+                rellenarTabla();
+            } catch (SQLException ex) {
+                Logger.getLogger(CREARESERVAS.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(null, "Ocurrió un error al modificar la reserva: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
-
-            JOptionPane.showMessageDialog(null, "Reserva modificada exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
-            // Actualizar la tabla de reservas después de la modificación
-            rellenarTabla();
-        } catch (SQLException ex) {
-            Logger.getLogger(CREARESERVAS.class.getName()).log(Level.SEVERE, null, ex);
-            JOptionPane.showMessageDialog(null, "Ocurrió un error al modificar la reserva: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+
 
 
     }//GEN-LAST:event_ModificarActionPerformed

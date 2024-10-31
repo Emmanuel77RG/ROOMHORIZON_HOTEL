@@ -202,7 +202,7 @@ public class HABITACIONESDISPONIBILIDAD extends javax.swing.JFrame {
         double tarifaHabitacion = Double.parseDouble(habitacionesTable.getValueAt(filaSeleccionada, 4).toString());
         String estadoHabitacion = habitacionesTable.getValueAt(filaSeleccionada, 5).toString();
         String detallesHabitacion = habitacionesTable.getValueAt(filaSeleccionada, 6).toString();
-        if(estadoHabitacion.equals("Ocupada") || estadoHabitacion.equals("En mantemiento")){
+        if(estadoHabitacion.equals("Ocupada") || estadoHabitacion.equals("En mantenimiento")){
             JOptionPane.showMessageDialog(null, "Por favor, seleccione una habitacion disponible", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
