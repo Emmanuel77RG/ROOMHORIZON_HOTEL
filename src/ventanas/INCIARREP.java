@@ -13,6 +13,8 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import javax.swing.JButton;
 import java.sql.ResultSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 
@@ -27,7 +29,25 @@ public class INCIARREP extends javax.swing.JFrame {
         setLocationRelativeTo(null);
 
         this.OCULTAR.setVisible(false);
+        try {
+            verificarUsuario();
+        } catch (SQLException ex) {
+            Logger.getLogger(INCIARREP.class.getName()).log(Level.SEVERE, null, ex);
+        }
        
+    }
+    
+    private void verificarUsuario() throws SQLException{
+        consultaEmpleado = new EmpleadoDAO();
+        if(consultaEmpleado.verificarBaseDatos()){
+            return;
+        }else{
+            JOptionPane.showMessageDialog(this, "Registrese como nuevo usuario.", "Registro necesario", JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+            new REGISTRARUSUARIO().setVisible(true);
+        }
+        
+        
     }
 
     @SuppressWarnings("unchecked")

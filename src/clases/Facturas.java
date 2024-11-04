@@ -4,10 +4,14 @@
  */
 package clases;
 
+import java.util.Date;
+
 /**
  *
  * @author omara
  */
 public class Facturas {
 
+    private Date fechaFactura;
+    private Pagos pago;
 }

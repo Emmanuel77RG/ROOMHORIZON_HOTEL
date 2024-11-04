@@ -101,4 +101,15 @@ public class EmpleadoDAO {
         }
         return idEmpleado;
     }
+    public boolean verificarBaseDatos() throws SQLException{
+
+        String query ="Select * from hotel.empleados";
+        PreparedStatement statement=conexion.prepareStatement(query);
+        ResultSet resultados;
+        resultados=statement.executeQuery();
+        while(resultados.next()){
+            return true;
+        }
+        return false;
+    }
 }
